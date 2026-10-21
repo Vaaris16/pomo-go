@@ -13,15 +13,20 @@ impl Timer {
         }
     }
 
-    pub fn timer(&mut self) -> (u64, u64) {
-        let now = Instant::now();
-        let elapsed = now.duration_since(self.last_time).as_secs_f64();
+    pub fn timer(&mut self, is_running: bool) -> (u64, u64) {
+        if is_running {
+            let now = Instant::now();
+            let elapsed = now.duration_since(self.last_time).as_secs_f64();
 
-        self.remaining_time -= elapsed;
-        self.last_time = now;
+            self.remaining_time -= elapsed;
+            self.last_time = now;
+        } else {
+            self.last_time = Instant::now();
+        }
 
         let minutes = self.remaining_time as u64 / 60;
         let seconds = self.remaining_time as u64 % 60;
+
         (minutes, seconds)
     }
 }

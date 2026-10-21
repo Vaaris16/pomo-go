@@ -18,9 +18,7 @@ fn main() -> eframe::Result {
     )
 }
 
-#[derive(Default)]
 pub enum PomoState {
-    #[default]
     Focus,
     Rest,
 }
@@ -28,20 +26,22 @@ pub enum PomoState {
 pub struct PomoGo {
     pomo_state: PomoState,
     timer: Timer,
+    is_running: bool,
 }
 
 impl Default for PomoGo {
     fn default() -> Self {
         Self {
-            pomo_state: PomoState::Rest,
+            pomo_state: PomoState::Focus,
             timer: Timer::new(),
+            is_running: true,
         }
     }
 }
 
 impl eframe::App for PomoGo {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
-        self.timer.timer();
+        self.timer.timer(self.is_running);
         pomo_ui(self, ui);
         ui.ctx().request_repaint();
     }
