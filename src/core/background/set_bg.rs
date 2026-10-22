@@ -1,10 +1,10 @@
 use egui::Color32;
 
-use crate::PomoState;
+use crate::{FOCUS_APP_BACKGROUND, PomoState, REST_APP_BACKGROUND};
 
 pub fn set_bg(pomo_state: &PomoState) -> Color32 {
     match pomo_state {
-        PomoState::Focus => Color32::RED,
-        PomoState::Rest => Color32::GREEN,
+        PomoState::Focus => FOCUS_APP_BACKGROUND,
+        PomoState::Rest => REST_APP_BACKGROUND,
     }
 }
