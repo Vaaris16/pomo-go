@@ -19,6 +19,10 @@ pub fn pomo_ui(pomo_go: &mut PomoGo, ui: &mut Ui) {
 fn pomo_timer(ui: &mut Ui, pomo_go: &mut PomoGo) {
     let (m, s) = pomo_go.timer.timer(&pomo_go.is_running);
 
+    if matches!(m, 0) && matches!(s, 0) && matches!(pomo_go.is_running, PomoTimerState::Running) {
+        pomo_go.toggle_pomo_state();
+    }
+
     let time = format!("{:02}:{:02}", m, s);
 
     ui.add(

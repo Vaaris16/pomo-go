@@ -12,6 +12,9 @@ mod ui;
 pub const FOCUS_APP_BACKGROUND: Color32 = Color32::from_rgb(187, 84, 75);
 pub const REST_APP_BACKGROUND: Color32 = Color32::from_rgb(90, 129, 102);
 
+pub const FOCUS_STATE_TIME: f64 = 25. * 60.;
+pub const REST_STATE_TIME: f64 = 15. * 60.;
+
 fn main() -> eframe::Result {
     let options = NativeOptions {
         viewport: egui::ViewportBuilder::default().with_fullscreen(true),
@@ -27,6 +30,7 @@ fn main() -> eframe::Result {
     )
 }
 
+#[derive(PartialEq, Clone, Copy)]
 pub enum PomoState {
     Focus,
     Rest,
@@ -38,6 +42,12 @@ impl PomoGo {
             PomoTimerState::Paused => PomoTimerState::Running,
             PomoTimerState::Running => PomoTimerState::Paused,
             PomoTimerState::Finished => PomoTimerState::Finished,
+        }
+    }
+    pub fn toggle_pomo_state(&mut self) {
+        self.pomo_state = match self.pomo_state {
+            PomoState::Rest => PomoState::Focus,
+            PomoState::Focus => PomoState::Rest,
         }
     }
 }
@@ -68,6 +78,7 @@ impl eframe::App for PomoGo {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         self.timer.timer(&self.is_running);
         pomo_ui(self, ui);
+        self.timer.set_timer(self.pomo_state);
         ui.ctx().request_repaint();
     }
 }
