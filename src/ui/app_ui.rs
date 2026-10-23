@@ -2,7 +2,7 @@ use eframe::wgpu::Color;
 use egui::{Align, Button, Color32, CornerRadius, Layout, RichText, Ui};
 use egui_alignments::center_vertical;
 
-use crate::{PomoGo, PomoTimerState, core::background::set_bg::set_bg};
+use crate::{PomoGo, PomoState, PomoTimerState, core::background::set_bg::set_bg};
 
 pub fn pomo_ui(pomo_go: &mut PomoGo, ui: &mut Ui) {
     let bg = set_bg(&pomo_go.pomo_state);
@@ -10,6 +10,7 @@ pub fn pomo_ui(pomo_go: &mut PomoGo, ui: &mut Ui) {
         .frame(egui::Frame::default().fill(bg))
         .show(ui, |ui| {
             center_vertical(ui, |ui| {
+                state_indicator(ui, pomo_go);
                 pomo_timer(ui, pomo_go);
                 toggle_timer_button(pomo_go, ui);
             });
@@ -59,4 +60,33 @@ fn toggle_timer_button(pomo_go: &mut PomoGo, ui: &mut Ui) {
     if button.clicked() {
         pomo_go.toggle_timer_state()
     }
+}
+
+const STATE_INDICATOR_REST_BG_COLOR: Color32 = Color32::from_rgb(81, 116, 92);
+const STATE_INDICATOR_FOCUS_BG_COLOR: Color32 = Color32::from_rgb(168, 76, 68);
+
+fn state_indicator(ui: &mut Ui, pomo_go: &mut PomoGo) {
+    let bg_color = match pomo_go.pomo_state {
+        PomoState::Rest => STATE_INDICATOR_REST_BG_COLOR,
+        PomoState::Focus => STATE_INDICATOR_FOCUS_BG_COLOR,
+    };
+    egui::Frame::new()
+        .fill(bg_color)
+        .corner_radius(CornerRadius::same(255))
+        .show(ui, |ui| {
+            ui.set_max_size(egui::vec2(100.0, 40.0));
+            ui.centered_and_justified(|ui| {
+                ui.add(egui::Label::new(
+                    egui::RichText::new(match pomo_go.pomo_state {
+                        PomoState::Focus => "Focus",
+                        PomoState::Rest => "Rest",
+                    })
+                    .color(Color32::WHITE)
+                    .font(egui::FontId {
+                        size: 15.,
+                        family: egui::FontFamily::Name("Inter-Bold".into()),
+                    }),
+                ));
+            });
+        });
 }
